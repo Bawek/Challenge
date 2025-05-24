@@ -19,10 +19,10 @@ type Server struct {
 	port          int
 	router        *http.ServeMux
 	logger        *slog.Logger
-	PersonService *person_service.PersonService
+	PersonService person_service.PersonServiceAbstrcatImpl
 }
 
-func NewApp(port int, personService *person_service.PersonService, logger *slog.Logger) *Server {
+func NewApp(port int, personService person_service.PersonServiceAbstrcatImpl, logger *slog.Logger) *Server {
 
 	app := &Server{
 		router:        http.NewServeMux(),

@@ -8,23 +8,23 @@ import (
 	"github.com/izymalhaw/go-crud/yishakterefe/internal/ports"
 )
 
-type PersonService struct {
+type PersonServiceStore struct {
 	PersonRepo ports.PersonRepository
 }
 
-func NewPersonSvc(personRepo ports.PersonRepository) *PersonService {
-	return &PersonService{PersonRepo: personRepo}
+func NewPersonSvc(personRepo ports.PersonRepository) PersonServiceAbstrcatImpl {
+	return &PersonServiceStore{PersonRepo: personRepo}
 }
 
-func (s *PersonService) CreatePerson(ctx context.Context, person domain.Person) error {
+func (s *PersonServiceStore) CreatePerson(ctx context.Context, person domain.Person) error {
 	return s.PersonRepo.CreatePerson(ctx, person)
 }
 
-func (s *PersonService) GetAllPersons(ctx context.Context, limit, offset int) ([]domain.Person, error) {
+func (s *PersonServiceStore) GetAllPersons(ctx context.Context, limit, offset int) ([]domain.Person, error) {
 	return s.PersonRepo.GetAllPersons(ctx, limit, offset)
 }
 
-func (s *PersonService) GetPerson(ctx context.Context, id uuid.UUID) (domain.Person, error) {
+func (s *PersonServiceStore) GetPerson(ctx context.Context, id uuid.UUID) (domain.Person, error) {
 	data, err := s.PersonRepo.GetPerson(ctx, id)
 	if err != nil {
 		return domain.Person{}, err
@@ -37,10 +37,10 @@ func (s *PersonService) GetPerson(ctx context.Context, id uuid.UUID) (domain.Per
 	}, nil
 }
 
-func (s *PersonService) UpdatePerson(ctx context.Context, person domain.Person) error {
+func (s *PersonServiceStore) UpdatePerson(ctx context.Context, person domain.Person) error {
 	return s.PersonRepo.UpdatePerson(ctx, person)
 }
 
-func (s *PersonService) DeletePerson(ctx context.Context, id uuid.UUID) error {
+func (s *PersonServiceStore) DeletePerson(ctx context.Context, id uuid.UUID) error {
 	return s.PersonRepo.DeletePerson(ctx, id)
 }
