@@ -14,12 +14,14 @@ var (
 	ErrLogLevel     = errors.New("log level not set")
 	ErrInvalidEnv   = errors.New("env not set or invalid")
 	ErrInvalidLevel = errors.New("invalid log level")
+	ErrDBUrl        = errors.New("invalid database url")
 )
 
 type Config struct {
-	Port          int
-	LogLevel      slog.Level
-	Env           string
+	Port     int
+	LogLevel slog.Level
+	Env      string
+	DBUrl    string
 }
 
 var Environment = map[string]string{
@@ -28,35 +30,43 @@ var Environment = map[string]string{
 }
 
 func (c *Config) loadEnv() error {
+	// Load ENV
 	env := os.Getenv("ENV")
 	if env == "" {
 		return ErrInvalidEnv
 	}
-
 	evalue, ok := Environment[env]
 	if !ok {
 		return ErrInvalidEnv
 	}
 	c.Env = evalue
 
-	
+	// Load LOG_LEVEL
 	logLevel := os.Getenv("LOG_LEVEL")
 	if logLevel == "" {
 		return ErrLogLevel
 	}
-
 	lvl, ok := customlogger.LogLevels[logLevel]
 	if !ok {
 		return ErrInvalidLevel
 	}
 	c.LogLevel = lvl
 
+	// Load PORT
 	portStr := os.Getenv("PORT")
 	port, err := strconv.Atoi(portStr)
 	if err != nil {
 		return ErrInvalidPort
 	}
 	c.Port = port
+
+	// Load DATABASE_URL
+	dburl := os.Getenv("DATABASE_URL")
+	if dburl == "" {
+		return ErrDBUrl
+	}
+	c.DBUrl = dburl
+
 	return nil
 }
 
