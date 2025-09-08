@@ -5,6 +5,8 @@ import (
 	"os"
 
 	// "github.com/jackc/pgx/v5/pgxpool"
+	"database/sql"
+	_ "github.com/go-sql-driver/mysql"
 
 	_ "github.com/izymalhaw/go-crud/yishakterefe/docs"
 	"github.com/izymalhaw/go-crud/yishakterefe/internal/api/handlers"
@@ -13,8 +15,6 @@ import (
 	"github.com/izymalhaw/go-crud/yishakterefe/internal/repository"
 	person_service "github.com/izymalhaw/go-crud/yishakterefe/internal/services/person"
 	"github.com/joho/godotenv"
-	"gorm.io/driver/mysql"
-	"gorm.io/gorm"
 )
 
 const version = "1.0.0"
@@ -34,16 +34,17 @@ func main() {
 	}
 
 	// Connect to MySQL
-	db, err := gorm.Open(mysql.Open(cfg.DBUrl), &gorm.Config{})
+	db, err := sql.Open("mysql", cfg.DBUrl)
 	if err != nil {
 		slog.Error("failed to connect to db", "error", err)
 		os.Exit(1)
 	}
-	sqlDB, err := db.DB()
-	if err != nil {
-		slog.Error("failed to Load DB ", "error", err)
+
+	// Test connection
+	if err := db.Ping(); err != nil {
+		slog.Error("failed to ping db", "error", err)
+		os.Exit(1)
 	}
-	defer sqlDB.Close()
 
 	// Logger
 	logger := customlogger.NewLogger(cfg.Env, cfg.LogLevel, version)
